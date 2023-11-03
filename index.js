@@ -15,22 +15,22 @@ app.use(cors({
 app.use(express.json())
 app.use(cookieParser())
 
-// const verifyToken= async(req,res,next)=>{
-//     const token= req.cookies?.token;
-//     console.log("value of token in middleware",token);
-//     if(!token){
-//         return res.status(401).send({message:'not authorized'})
-//     }
-//     jwt.verify(token, process.env.ACCESS_SECRET_TOKEN, (err,decoded)=>{
-//         if(err){
-//             return res.status(401).send({message:'forbidden'})
-//         }
-//         console.log('value in  the token', decoded);
-//         req.user=decoded
-//         next()
-//     })
+const verifyToken= async(req,res,next)=>{
+    const token= req.cookies?.token;
+    console.log("value of token in middleware",token);
+    if(!token){
+        return res.status(401).send({message:'not authorized'})
+    }
+    jwt.verify(token, process.env.ACCESS_SECRET_TOKEN, (err,decoded)=>{
+        if(err){
+            return res.status(401).send({message:'forbidden'})
+        }
+        console.log('value in  the token', decoded);
+        req.user=decoded
+        next()
+    })
     
-// }
+}
 
 
 
@@ -38,22 +38,22 @@ app.use(cookieParser())
 // docUser
 // console.log(process.env.DB_PASS,process.env.DB_USER);
 
-const verifyToken=(req,res,next)=>{
-    const token = req?.cookies?.token
-    console.log('token form vifiry and middleware', token);
-    if(!token){
-        return res.status(401).send('not authorized')
-    }
-    jwt.verify(token, process.env.ACCESS_SECRET_TOKEN, (err, decoded)=>{
-        if(err){
-            return res.status(403).send('forbidden')
-        }
-        req.user= decoded
-        next()
-    })
+// const verifyToken=(req,res,next)=>{
+//     const token = req?.cookies?.token
+//     console.log('token form vifiry and middleware', token);
+//     if(!token){
+//         return res.status(401).send('not authorized')
+//     }
+//     jwt.verify(token, process.env.ACCESS_SECRET_TOKEN, (err, decoded)=>{
+//         if(err){
+//             return res.status(403).send('forbidden')
+//         }
+//         req.user= decoded
+//         next()
+//     })
   
 
-}
+// }
 
 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
@@ -160,7 +160,7 @@ app.post('/logout', async(req,res)=>{
             // }
             // console.log('cook cuk cokies', req.cookies);
             if(req.query.email !== req.user.email){
-                res.status(401).send({message : 'email to mille nai boddda'})
+               return res.status(401).send('not authorized')
             }
             let query = {}
             if (req.query?.email) {
